@@ -24,6 +24,13 @@ static int client_cert_cb(SSL *ssl, X509 **x509, EVP_PKEY **pkey) {
     return -1;
 }
 
+static int client_cert_cb_return_zero(SSL *ssl, X509 **x509, EVP_PKEY **pkey) {
+    // This callback is here so we can detect when the server wants a client cert
+    // It will trigger an SSL_ERROR_WANT_X509_LOOKUP error during the handshake
+    // if the server expected a client certificate and we didn't provide one
+    return 0;
+}
+
 
 // nassl.SSL_CTX.new()
 static PyObject* nassl_SSL_CTX_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
@@ -185,6 +192,10 @@ static PyObject* nassl_SSL_CTX_set_private_key_password(nassl_SSL_CTX_Object *se
     Py_RETURN_NONE;
 }
 
+static PyObject* nassl_SSL_CTX_set_client_cert_zero(nassl_SSL_CTX_Object *self, PyObject *args) {
+    SSL_CTX_set_client_cert_cb(self->sslCtx, client_cert_cb_return_zero);
+	Py_RETURN_NONE;
+}
 
 static PyMethodDef nassl_SSL_CTX_Object_methods[] = {
     {"set_verify", (PyCFunction)nassl_SSL_CTX_set_verify, METH_VARARGS,
@@ -195,6 +206,9 @@ static PyMethodDef nassl_SSL_CTX_Object_methods[] = {
     },
     {"set_private_key_password", (PyCFunction)nassl_SSL_CTX_set_private_key_password, METH_VARARGS,
      "Sets up a default callback for encrypted PEM file handling using OpenSSL's SSL_CTX_set_default_passwd_cb() with a hardcoded callback, and then stores the supplied password to be used for subsequent PEM decryption operations."
+    },
+    {"set_client_cert_zero", (PyCFunction)nassl_SSL_CTX_set_client_cert_zero, METH_VARARGS,
+     "Make the client cert call back return 0 certificates"
     },
     {NULL}  // Sentinel
 };

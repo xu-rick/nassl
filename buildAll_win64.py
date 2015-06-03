@@ -24,7 +24,7 @@ def main():
     # Build Zlib
     ZLIB_BUILD_TASKS = [
         'bld_ml64.bat',
-        'vcbuild /rebuild ..\\vstudio\\vc9\\zlibvc.sln "Release|x64"']
+        'vcbuild /build ..\\vstudio\\vc9\\zlibvc.sln "Release|x64"']
 
     perform_build_task('ZLIB', ZLIB_BUILD_TASKS, ZLIB_DIR + '\\contrib\\masmx64\\')
 

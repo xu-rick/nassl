@@ -72,6 +72,7 @@ class SslClient(object):
             # TODO: Auto create a socket ?
             raise IOError('Internal socket set to None; cannot perform handshake.')
 
+        respondedWithNoCertificate = False
         while True:
             try:
                 if self._ssl.do_handshake() == 1:
@@ -97,8 +98,12 @@ class SslClient(object):
                 self._networkBio.write(handshakeDataIn)
 
             except WantX509LookupError:
-                # Server asked for a client certificate and we didn't provide one
-                raise ClientCertificateRequested(self._ssl.get_client_CA_list())
+                # Server asked for a client certificate and we didn't provide one, send 0 certs to server at first time
+                if not respondedWithNoCertificate:
+                    self._sslCtx.set_client_cert_zero()
+                    respondedWithNoCertificate = True
+                else: # the server insist we need to have a specific certificate to do handshake
+                    raise ClientCertificateRequested(self._ssl.get_client_CA_list())
 
 
 
