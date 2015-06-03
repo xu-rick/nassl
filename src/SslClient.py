@@ -201,6 +201,20 @@ class SslClient(object):
         return self._ssl.get_cipher_list()
 
 
+    def get_peer_cert_chain(self):
+        """
+        See the OpenSSL documentation for differences between get_peer_cert_chain() and get_peer_certificate().
+        https://www.openssl.org/docs/ssl/SSL_get_peer_cert_chain.html
+        """
+        _x509_list = self._ssl.get_peer_cert_chain()
+        final_list = []
+        if _x509_list:
+            for _x509 in _x509_list:
+                final_list.append(X509Certificate(_x509))
+
+        return final_list
+        
+        
     def get_current_cipher_name(self):
         return self._ssl.get_cipher_name()
 
