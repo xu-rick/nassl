@@ -25,9 +25,7 @@ static int client_cert_cb(SSL *ssl, X509 **x509, EVP_PKEY **pkey) {
 }
 
 static int client_cert_cb_return_zero(SSL *ssl, X509 **x509, EVP_PKEY **pkey) {
-    // This callback is here so we can detect when the server wants a client cert
-    // It will trigger an SSL_ERROR_WANT_X509_LOOKUP error during the handshake
-    // if the server expected a client certificate and we didn't provide one
+    // This callback is here so we can send 0 certificates to the server when the server request certificate.
     return 0;
 }
 
