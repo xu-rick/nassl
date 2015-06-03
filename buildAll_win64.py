@@ -50,7 +50,7 @@ def main():
 
     # Test nassl
     NASSL_TEST_TASKS = [
-        'C:\\Python27\\python.exe -m unittest discover --pattern=*_Tests.py']
+        'D:\\Python27\\python.exe -m unittest discover --pattern=*_Tests.py']
 
     perform_build_task('NASSL Tests', NASSL_TEST_TASKS, TEST_DIR)
 
